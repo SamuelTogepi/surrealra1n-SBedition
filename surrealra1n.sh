@@ -1,5 +1,5 @@
 #!/bin/bash
-CURRENT_VERSION="v2.1 beta 5"
+CURRENT_VERSION="v2.1 beta 6"
 
 if [ "$EUID" -eq 0 ]; then
   echo "ERROR: Do not run this script with sudo or as root."
@@ -567,10 +567,6 @@ fetch_firmware() {
             rm -f "$ipsw_file"
         fi
     fi
-    #if [[ $version2 == $LATEST_VERSION ]]; then
-    #    echo "IPSW is latest, redirecting path"
-    #    IPSW_PATH_LATEST="firmware_downloads/$IDENTIFIER/$LATEST_VERSION.ipsw"
-    #fi
 
     echo
     echo "Information:"
@@ -725,8 +721,6 @@ else
 fi
 
 echo "Checking for existing binaries..."
-
-#!/bin/bash
 
 # Check if all required binaries exist
 if [[ -f "./bin/img4" && \
@@ -1216,9 +1210,6 @@ elif [[ $IDENTIFIER == iPad11,1 ]]; then
     ANE="h11_ane_fw_quin.im4p"
     AVE="AppleAVE2FW_H11.im4p"
     MTFW="J210_Multitouch.im4p"
-    # ipad wifi version doesn't have callan firmware
-    # ipad doesn't hav haptic firmware
-    # ipad wifi version doesn't have wirelesspower firmware
     KERNEL2="kernelcache.release.ipad11x"
 elif [[ $IDENTIFIER == iPad11,2 ]]; then
     REFER="ipad11"
@@ -1234,9 +1225,6 @@ elif [[ $IDENTIFIER == iPad11,2 ]]; then
     ANE="h11_ane_fw_quin.im4p"
     AVE="AppleAVE2FW_H11.im4p"
     MTFW="J211_Multitouch.im4p"
-    # ipad wifi version doesn't have callan firmware
-    # ipad doesn't hav haptic firmware
-    # ipad wifi version doesn't have wirelesspower firmware
     KERNEL2="kernelcache.release.ipad11x"
 elif [[ $IDENTIFIER == iPad11,3 ]]; then
     REFER="ipad11"
@@ -1252,9 +1240,6 @@ elif [[ $IDENTIFIER == iPad11,3 ]]; then
     ANE="h11_ane_fw_quin.im4p"
     AVE="AppleAVE2FW_H11.im4p"
     MTFW="J217_Multitouch.im4p"
-    # ipad wifi version doesn't have callan firmware
-    # ipad doesn't hav haptic firmware
-    # ipad wifi version doesn't have wirelesspower firmware
     KERNEL2="kernelcache.release.ipad11x"
 elif [[ $IDENTIFIER == iPad11,4 ]]; then
     REFER="ipad11"
@@ -1270,9 +1255,6 @@ elif [[ $IDENTIFIER == iPad11,4 ]]; then
     ANE="h11_ane_fw_quin.im4p"
     AVE="AppleAVE2FW_H11.im4p"
     MTFW="J218_Multitouch.im4p"
-    # ipad wifi version doesn't have callan firmware
-    # ipad doesn't hav haptic firmware
-    # ipad wifi version doesn't have wirelesspower firmware
     KERNEL2="kernelcache.release.ipad11x"
 elif [[ $IDENTIFIER == iPhone11,2 ]]; then
     REFER="iphone11"
@@ -2020,7 +2002,10 @@ if [[ $IDENTIFIER == iPhone6* ]] && [[ $VERSION == 8.0* || $VERSION == 8.1* || $
     echo "5. Potentially other broken features"
     echo "6. The device may take several minutes to boot for first boot"
     read -p "Press enter to continue"
-elif [[ $IDENTIFIER == iPhone6* || $IDENTIFIER == iPhone7* || $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPod7* || $IDENTIFIER == iPad4,1 || $IDENTIFIER == iPad4,2 || $IDENTIFIER == iPad4,3 || $IDENTIFIER == iPad4,4 || $IDENTIFIER == iPad4,5 ]] && [[ $VERSION == 7.* || $VERSION == 8.* || $VERSION == 9.* || $VERSION == 10.0* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
+elif [[ $IDENTIFIER == iPhone6* || $IDENTIFIER == iPad4,1 || $IDENTIFIER == iPad4,2 || $IDENTIFIER == iPad4,3 || $IDENTIFIER == iPad4,4 || $IDENTIFIER == iPad4,5 ]] && [[ $VERSION == 7.* || $VERSION == 8.* || $VERSION == 9.* || $VERSION == 10.0* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
+    echo "SEP is incompatible. Restore cannot continue"
+    exit 1
+elif [[ $IDENTIFIER == iPhone7* || $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPod7* ]] && [[ $VERSION == 7.* || $VERSION == 8.* || $VERSION == 9.* || $VERSION == 10.0* ]]; then
     echo "SEP is incompatible. Restore cannot continue"
     exit 1
 fi
@@ -2028,8 +2013,12 @@ if [[ $IDENTIFIER == iPhone6* ]] && [[ $VERSION == 10.1* ]]; then
     echo "SEP is compatible but Touch ID will break"
     read -p "Press enter to continue"
 fi
-if [[ $IDENTIFIER == iPhone7* || $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 ]] && [[ $VERSION == 10.1* || $VERSION == 10.2* || $VERSION == 10.3* ]]; then
+if [[ $IDENTIFIER == iPhone7* || $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 ]] && [[ $VERSION == 10.1* || $VERSION == 10.2* || $VERSION == 10.3* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
     echo "SEP is compatible but Touch ID will break, device may take 3-5 minutes to boot, and may hang during Setup"
+    read -p "Press enter to continue"
+fi
+if [[ $IDENTIFIER == iPod7* ]] && [[ $VERSION == 10.1* || $VERSION == 10.2* || $VERSION == 10.3* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
+    echo "SEP is compatible, device may take 3-5 minutes to boot, and may hang during Setup"
     read -p "Press enter to continue"
 fi
 if [[ $IDENTIFIER == iPad5* ]] && [[ $VERSION == 13.* ]]; then
@@ -2377,6 +2366,37 @@ if [[ $IDENTIFIER == iPhone7* || $IDENTIFIER == iPad5* || $IDENTIFIER == iPod7* 
             break
         fi
     done
+elif [[ $IDENTIFIER == iPhone7* || $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPod7* ]] && [[ $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
+    download_tvos_sep
+    unzip -j "$IPSW_PATH" "$KERNEL" -d work
+    ./bin/img4 -i work/$KERNEL -o work/kernel.raw
+    ./bin/Kernel64Patcher2 work/kernel.raw work/kernel.patch -u 11 --skip-sks --skip-acm --skip-amfi
+    ./bin/kerneldiff work/kernel.raw work/kernel.patch work/kernel.diff
+    ./bin/img4 -i work/$KERNEL -o work/kernel.im4p -T rkrn -P work/kernel.diff -J || true
+    prepatch_ibssibec_fr
+    while true; do
+        set +e
+        sudo FUTURERESTORE_I_SOLEMNLY_SWEAR_THAT_I_AM_UP_TO_NO_GOOD=1 \
+            ./futurerestore/futurerestore -t $SHSH_PATH --use-pwndfu \
+            --sep $sep_path --sep-manifest $manifest_path \
+            --custom-latest $LATEST_VERSION $use_skip_blob \
+            $updatebb_flag $rsep_flag --rkrn work/kernel.im4p $IPSW_PATH
+        EXIT_CODE=$?
+        set -e
+        if [[ $EXIT_CODE -eq 139 ]]; then
+            echo "futurerestore segfaulted (exit 139), retrying..."
+            sleep 2
+        else
+            break
+        fi
+    done
+    if [[ $EXIT_CODE -eq 0 ]]; then
+        echo "Restore has completed! Read above if there are any errors"
+        exit 0
+    else
+        echo "futurerestore failed with exit code $EXIT_CODE"
+        exit 1
+    fi
 elif [[ $IDENTIFIER == iPad4* || $IDENTIFIER == iPhone6* ]] && [[ $VERSION == 10.* ]]; then
     download_1033_ota_sep
     prepatch_ibssibec_fr
@@ -2396,7 +2416,7 @@ elif [[ $IDENTIFIER == iPad4* || $IDENTIFIER == iPhone6* ]] && [[ $VERSION == 10
             break
         fi
     done
-elif [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 ]] && [[ $VERSION == 11.* || $VERSION == 12.* ]]; then
+elif [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 ]] && [[ $VERSION == 11.3* || $VERSION == 11.4* || $VERSION == 12.* ]]; then
     download_iphone6_sep
     prepatch_ibssibec_fr
     while true; do
@@ -2598,7 +2618,7 @@ else
 fi
 ./bin/img4 -i work/kernel.im4p -o work/kernel.raw
 ./bin/KPlooshFinder work/kernel.raw work/kernel.patched
-if [[ $IDENTIFIER == iPad5* || $IDENTIFIER == iPhone7* ]] && [[ $VERSION == 10.* ]]; then
+if [[ $IDENTIFIER == iPad5* || $IDENTIFIER == iPhone7* || $IDENTIFIER == iPod7* ]] && [[ $VERSION == 10.* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
     mv -v work/kernel.patched work/kernel.patch
     ./bin/Kernel64Patcher2 work/kernel.patch work/kernel.patched -u 11 --skip-sks --skip-acm --skip-amfi
 fi
@@ -2670,31 +2690,19 @@ rm -rf "work"
 }
 
 # ---- Linux APFS helpers (EXPERIMENTAL) ----
-# iOS 16.1+ restore ramdisks are raw APFS containers, which the Linux hfsplus
-# CLI cannot open (it only handles the HFS+ ramdisks used up to iOS 16.0.x).
-# On Linux these ramdisks are patched by mounting them through the
-# linux-apfs-rw kernel module (https://github.com/linux-apfs/linux-apfs-rw),
-# mirroring the hdiutil attach flow used on macOS. Everything in this block is
-# Linux-only; macOS keeps using hdiutil.
-
 APFS_TRACK_FILE="apfs/active_mounts"
 
-# detect_fs_type <image> - print "HFS", "APFS" or "UNKNOWN" for a raw
-# filesystem image (as produced by `img4 -i` from a restore ramdisk).
 detect_fs_type() {
     local img="$1" sig
     if [[ ! -f "$img" ]]; then
         echo "UNKNOWN"
         return
     fi
-    # HFS+ / HFSX volumes: signature "H+" / "HX" at offset 1024.
-    # (tr strips null bytes so bash does not warn on binary input.)
     sig=$(dd if="$img" bs=1 skip=1024 count=2 2>/dev/null | tr -d '\000')
     if [[ $sig == "H+" || $sig == "HX" ]]; then
         echo "HFS"
         return
     fi
-    # APFS container superblocks: magic "NXSB" at offset 32
     sig=$(dd if="$img" bs=1 skip=32 count=4 2>/dev/null | tr -d '\000')
     if [[ $sig == "NXSB" ]]; then
         echo "APFS"
@@ -2703,10 +2711,6 @@ detect_fs_type() {
     echo "UNKNOWN"
 }
 
-# cleanup_apfs - unmount and detach every APFS loop mount we created, so a
-# failed or interrupted run never leaves stale mounts or loop devices behind.
-# Only entries recorded by apfs_mount in $APFS_TRACK_FILE are touched, so
-# unrelated host loop devices/filesystems are never affected.
 cleanup_apfs() {
     if [[ ! -f "$APFS_TRACK_FILE" ]]; then
         return
@@ -2720,9 +2724,6 @@ cleanup_apfs() {
     rm -f "$APFS_TRACK_FILE"
 }
 
-# setup_apfs_module - make sure the linux-apfs-rw kernel module is built for
-# the running kernel and loaded. Building requires the matching kernel headers;
-# loading requires root and may be blocked by Secure Boot.
 setup_apfs_module() {
     if [[ $dist == 3 || $dist == 4 ]]; then
         return
@@ -2776,23 +2777,14 @@ setup_apfs_module() {
             exit 1
         fi
     fi
-    # Clean up any mounts left behind by a previously interrupted run, then
-    # make sure they are also cleaned up if this run gets interrupted.
     cleanup_apfs
     trap cleanup_apfs EXIT
 }
 
-# apfs_mount <image> <mountpoint> <ro|rw> - mount an APFS raw image through a
-# loop device using the apfs kernel module. The loop device and mountpoint are
-# recorded in $APFS_TRACK_FILE so cleanup_apfs can undo them.
 apfs_mount() {
     local img="$1" mnt="$2" mode="${3:-ro}"
     local opts="ro"
     if [[ $mode == "rw" ]]; then
-        # The mount is done with sudo (root-owned), but the ramdisk files are
-        # patched as the non-root user, mirroring the macOS hdiutil flow. The
-        # uid/gid overrides make the mount appear user-owned so plain cp/rm/chmod
-        # work, and new files get the same user ownership macOS produces.
         opts="readwrite,uid=$(id -u),gid=$(id -g)"
     fi
     local loopdev
@@ -2811,8 +2803,6 @@ apfs_mount() {
     fi
 }
 
-# apfs_umount <mountpoint> - unmount and detach the loop device for a mount
-# previously created by apfs_mount.
 apfs_umount() {
     local mnt="$1" loopdev
     loopdev=$(awk -v m="$mnt" '$2 == m {print $1; exit}' "$APFS_TRACK_FILE" 2>/dev/null)
@@ -2821,8 +2811,6 @@ apfs_umount() {
         sudo losetup -d "$loopdev" 2>/dev/null || true
     fi
     if [[ -f "$APFS_TRACK_FILE" ]]; then
-        # Only rewrite the track file if awk succeeded, so a failure can never
-        # wipe the recorded mounts that cleanup_apfs relies on.
         if awk -v m="$mnt" '$2 != m' "$APFS_TRACK_FILE" > "$APFS_TRACK_FILE.tmp" 2>/dev/null; then
             mv "$APFS_TRACK_FILE.tmp" "$APFS_TRACK_FILE" 2>/dev/null || true
         else
@@ -2833,10 +2821,6 @@ apfs_umount() {
 
 make_custom_ipsw_a12_ios16(){
 
-# iOS 16.0.x is supported on both macOS and Linux (the restore ramdisk is HFS+)
-# iOS 16.1+ restore ramdisks use APFS, which the Linux hfsplus CLI cannot handle.
-# On Linux we patch APFS ramdisks through the experimental linux-apfs-rw kernel
-# module, so iOS 16.1+ restores on Linux are EXTREMELY EXPERIMENTAL.
 if [[ $dist == 3 || $dist == 4 ]]; then
     echo ""
 elif [[ $VERSION == 16.0* ]]; then
@@ -3564,7 +3548,7 @@ if [[ $IDENTIFIER == iPad5,3 || $IDENTIFIER == iPad5,4 ]] && [[ $VERSION == 11.*
     ./bin/kerneldiff work/kernel.raw work/kernel.patch work/kernel.diff
     ./bin/img4 -i work/$krnl -o $bootdir/Kernelcache.img4 -T rkrn -M $im4m -P work/kernel.diff -J || true
 fi
-if [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPhone7* ]] && [[ $VERSION == 10.* ]]; then
+if [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPhone7* || $IDENTIFIER == iPod7* ]] && [[ $VERSION == 10.* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
     ./bin/img4 -i work/$krnl -o work/kernel.raw
     ./bin/Kernel64Patcher2 work/kernel.raw work/kernel.patch -u 11 --skip-sks --skip-acm --skip-amfi
     ./bin/kerneldiff work/kernel.raw work/kernel.patch work/kernel.diff
@@ -3615,7 +3599,7 @@ elif [[ $IDENTIFIER == iPad5* ]] && [[ $VERSION == 12.* || $VERSION == 11.4* || 
         echo "Your device may have deep sleep issues after this restore"
     fi
     read -p "Press enter to continue"
-elif [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPhone7* ]] && [[ $VERSION == 10.* ]]; then
+elif [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPhone7* ]] && [[ $VERSION == 10.* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
     echo "Touch ID will not work"
     read -p "Press enter to continue"
 fi
@@ -3637,7 +3621,10 @@ fi
 if [[ $IDENTIFIER == iPad4,6 || $IDENTIFIER == iPad4,7 || $IDENTIFIER == iPad4,8 || $IDENTIFIER == iPad4,9 || $IDENTIFIER == iPad5,3 || $IDENTIFIER == iPad5,4 ]] && [[ $VERSION == 7.* || $VERSION == 8.* || $VERSION == 9.* || $VERSION == 10.* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
     echo "SEP is incompatible"
     exit 1
-elif [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPod7* || $IDENTIFIER == iPhone7* || $IDENTIFIER == iPhone6* || $IDENTIFIER == iPad4,1 || $IDENTIFIER == iPad4,2 || $IDENTIFIER == iPad4,3 || $IDENTIFIER == iPad4,4 || $IDENTIFIER == iPad4,5 ]] && [[ $VERSION == 7.* || $VERSION == 8.* || $VERSION == 9.* || $VERSION == 10.0* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
+elif [[ $IDENTIFIER == iPhone6* || $IDENTIFIER == iPad4,1 || $IDENTIFIER == iPad4,2 || $IDENTIFIER == iPad4,3 || $IDENTIFIER == iPad4,4 || $IDENTIFIER == iPad4,5 ]] && [[ $VERSION == 7.* || $VERSION == 8.* || $VERSION == 9.* || $VERSION == 10.0* || $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
+    echo "SEP is incompatible"
+    exit 1
+elif [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPod7* || $IDENTIFIER == iPhone7* ]] && [[ $VERSION == 7.* || $VERSION == 8.* || $VERSION == 9.* || $VERSION == 10.0* ]]; then
     echo "SEP is incompatible"
     exit 1
 fi
@@ -3726,6 +3713,25 @@ if [[ $IDENTIFIER == iPhone7* || $IDENTIFIER == iPad5* || $IDENTIFIER == iPod7* 
             break
         fi
     done
+elif [[ $IDENTIFIER == iPhone7* || $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 || $IDENTIFIER == iPod7* ]] && [[ $VERSION == 11.0* || $VERSION == 11.1* || $VERSION == 11.2* ]]; then
+    download_tvos_sep
+    prepatch_ibssibec_fr
+    while true; do
+        set +e
+        sudo FUTURERESTORE_I_SOLEMNLY_SWEAR_THAT_I_AM_UP_TO_NO_GOOD=1 \
+            ./futurerestore/futurerestore -t $SHSH_PATH --use-pwndfu \
+            --sep $sep_path --sep-manifest $manifest_path --skip-blob --rdsk $restoredir/ramdisk.im4p \
+            --custom-latest $LATEST_VERSION \
+            --rkrn $restoredir/kernel.im4p $updatebb_flag $rsep_flag $restoredir/custom.ipsw
+        EXIT_CODE=$?
+        set -e
+        if [[ $EXIT_CODE -eq 139 ]]; then
+            echo "futurerestore segfaulted (exit 139), retrying..."
+            sleep 2
+        else
+            break
+        fi
+    done
 elif [[ $IDENTIFIER == iPad4* || $IDENTIFIER == iPhone6* ]] && [[ $VERSION == 10.* ]]; then
     download_1033_ota_sep
     prepatch_ibssibec_fr
@@ -3745,7 +3751,7 @@ elif [[ $IDENTIFIER == iPad4* || $IDENTIFIER == iPhone6* ]] && [[ $VERSION == 10
             break
         fi
     done
-elif [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 ]] && [[ $VERSION == 11.* || $VERSION == 12.* ]]; then
+elif [[ $IDENTIFIER == iPad5,1 || $IDENTIFIER == iPad5,2 ]] && [[ $VERSION == 11.3* || $VERSION == 11.4* || $VERSION == 12.* ]]; then
     download_iphone6_sep
     prepatch_ibssibec_fr
     while true; do
